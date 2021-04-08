@@ -4,7 +4,7 @@
 namespace App\Interfaces;
 
 use App\Interfaces\IService;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 
 interface IUserService extends IService
 {
@@ -12,9 +12,17 @@ interface IUserService extends IService
 
     public function store(Request $request);
 
-    public function show();
+    public function show($id);
 
-    public function update(Request $request);
+    public function update(Request $request, $id);
     
-    public function destroy();
+    public function destroy($id);
+
+    public function find($id);
+
+    public function ableTransference($id);
+
+    public function debit($id, $value);
+
+    public function credit($id, $value);
 }

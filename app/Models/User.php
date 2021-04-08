@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Config;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'document',
+        'user_type_id'
     ];
 
     /**
@@ -51,7 +55,7 @@ class User extends Authenticatable
      */
     public function wallets()
     {
-        return $this->belongsToMany(Wallet::class);
+        return $this->belongsToMany(Wallet::class, 'user_wallet', 'wallet_id', 'user_id');
     }
 
     /**
@@ -60,6 +64,50 @@ class User extends Authenticatable
     public function user_type()
     {
         return $this->belongsTo(UserType::class);
+    }
+
+    /**
+     * The payers transference that belong to the user.
+     */
+    public function payments()
+    {
+        return $this->belongsToMany(Transference::class, 'payer_transference', 'transference_id', 'user_id');
+    }
+
+    /**
+     * The payees transference that belong to the user.
+     */
+    public function receiptments()
+    {
+        return $this->belongsToMany(Transference::class, 'payee_transference', 'transference_id', 'user_id');
+    }
+
+    /**
+     * The payees transference that belong to the user.
+     */
+    public function ableTransference()
+    {
+        return $this->user_type_id === Config::get('constants.common_user.id');;
+    }
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 
     public function rules()
@@ -73,7 +121,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function feedback()
+    public function messages()
     {
         return [
             'name.required' => 'O campo nome é obrigatório!',

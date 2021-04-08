@@ -16,4 +16,15 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api;
 
-Route::apiResource('users', Api\UserController::class);
+Route::post('auth/login', [Api\AuthController::class, 'login']);
+Route::get('user_types', [Api\UserTypeController::class, 'index']);
+
+Route::group(['middleware' => 'auth.jwt'], function () {
+    Route::apiResource('users', Api\UserController::class);
+    Route::post('auth/logout', [Api\AuthController::class, 'logout']);
+    Route::post('transference', [Api\TransferenceController::class, 'transaction']);
+});
+
+
+
+

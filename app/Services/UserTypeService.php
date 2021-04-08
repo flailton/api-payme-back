@@ -24,15 +24,6 @@ class UserTypeService implements IUserTypeService
      */
     public function all()
     {
-        try{
-            $userTypes = $this->userTypeRepository->all();
-
-            $response['body'] = $userTypes;
-        } catch (Exception $ex) {
-            $response['body']['errors'][] = $ex->getMessage();
-            $response['status'] = 404;
-        }
-        
-        return $response;
+        return $this->userTypeRepository->all();
     }
 }

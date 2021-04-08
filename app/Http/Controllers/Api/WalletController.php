@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Interfaces\IWalletService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Interfaces\IWalletService;
 
 class WalletController extends Controller
 {
@@ -18,11 +19,11 @@ class WalletController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show()
+    public function show($id)
     {
-        $response = $this->walletService->show();
+        $response = $this->walletService->show($id);
         $status = (!empty($response['status'])? $response['status'] : 200);
 
-        return response()->json($response['body'], $status);
+        return response()->json($response, $status);
     }
 }

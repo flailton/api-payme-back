@@ -10,9 +10,15 @@ interface IUserRepository extends IRepository
 
     public function store($attributes);
 
-    public function show();
+    public function show($id);
 
-    public function update($attributes);
+    public function update($attributes, $id);
     
-    public function destroy();
+    public function destroy($id);
+
+    public function ableTransference($id);
+
+    public function find($id);
+
+    public function getUser();
 }

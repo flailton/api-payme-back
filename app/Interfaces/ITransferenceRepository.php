@@ -4,12 +4,13 @@ namespace App\Interfaces;
 
 use App\Interfaces\IRepository;
 
-interface IWalletRepository extends IRepository
+interface ITransferenceRepository extends IRepository
 {
     public function show($id);
+
+    public function store($attributes);
     
     public function update($attributes, $id);
-    
-    public function canDebit($wallet, $value);
 
+    public function getTransference();
 }

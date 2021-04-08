@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePayeeUserTable extends Migration
+class CreatePayeeTransferenceTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreatePayeeUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('payee_user', function (Blueprint $table) {
+        Schema::create('payee_transference', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('payee_id');
+            $table->unsignedBigInteger('transference_id');
 
-            $table->foreign('payee_id')->references('id')->on('payees');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('transference_id')->references('id')->on('transferences');
             
-            $table->unique(['user_id', 'payee_id']);
+            $table->unique(['user_id', 'transference_id']);
         });
     }
 
@@ -31,6 +31,6 @@ class CreatePayeeUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payee_user');
+        Schema::dropIfExists('payee_transference');
     }
 }

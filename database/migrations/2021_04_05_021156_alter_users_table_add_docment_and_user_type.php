@@ -18,8 +18,6 @@ class AlterUsersTableAddDocmentAndUserType extends Migration
             $table->unsignedBigInteger('user_type_id');
 
             $table->foreign('user_type_id')->references('id')->on('user_types');
-
-            $table->softDeletes();
         });
     }
 
@@ -30,9 +28,7 @@ class AlterUsersTableAddDocmentAndUserType extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropSoftDeletes();
-            
+        Schema::table('users', function (Blueprint $table) {            
             $table->dropForeign('users_user_type_id_foreign');
             
             $table->dropColumn(['document', 'user_type_id']);

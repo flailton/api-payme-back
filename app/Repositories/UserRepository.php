@@ -38,9 +38,9 @@ class UserRepository implements IUserRepository
      *
      * @return \App\Models\User
      */
-    public function show()
+    public function show($id)
     {
-        return $this->user;
+        return $this->user->find($id);
     }
 
     /**
@@ -49,9 +49,9 @@ class UserRepository implements IUserRepository
      * @param  Array  $attributes
      * @return \App\Models\User
      */
-    public function update($attributes)
+    public function update($attributes, $id)
     {
-        $this->user->update($attributes);
+        $this->user->find($id)->update($attributes);
         
         return $this->user;
     }
@@ -62,11 +62,45 @@ class UserRepository implements IUserRepository
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy()
+    public function destroy($id)
     {
-        $user = $this->user;
-        $this->user->delete();
+        $user = $this->user->find($id);
+
+        $user->wallets()->detach();
+        $user->payments()->detach();
+        $user->receiptments()->detach();
+
+        $user->delete();
 
         return $user;
+    }
+
+    /**
+     * Find a specified resource from storage.
+     *
+     * @param  Numeric  $id
+     * @return App\Models\User
+     */
+    public function ableTransference($id){
+        return $this->user->find($id)->ableTransference();
+    }
+
+    /**
+     * Find a specified resource from storage.
+     *
+     * @param  Numeric  $id
+     * @return App\Models\User
+     */
+    public function find($id){
+        return $this->user->find($id);
+    }
+
+    /**
+     * Returns current user.
+     *
+     * @return App\Models\User
+     */
+    public function getUser(){
+        return $this->user;
     }
 }

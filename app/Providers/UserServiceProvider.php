@@ -32,6 +32,10 @@ class UserServiceProvider extends ServiceProvider
             ->needs('App\Interfaces\IUserRepository')
             ->give('App\Repositories\UserRepository');
 
+        $this->app->when('App\Services\UserService')
+            ->needs('App\Interfaces\IWalletService')
+            ->give('App\Services\WalletService');
+
         $this->app->when('App\Http\Controllers\Api\UserController')
             ->needs('App\Interfaces\IUserService')
             ->give('App\Services\UserService');

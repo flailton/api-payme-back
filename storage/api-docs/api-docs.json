@@ -1,0 +1,1086 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Pay me Back",
+        "description": "API",
+        "contact": {
+            "email": "flailton@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000/",
+            "description": "API Local Server"
+        }
+    ],
+    "paths": {
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Efetuar login",
+                "description": "Login por email e password",
+                "operationId": "login",
+                "requestBody": {
+                    "description": "Informe seus dados",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user1@mail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "PassWord12345"
+                                    },
+                                    "persistent": {
+                                        "type": "boolean",
+                                        "example": "true"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Não autorizado!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHR"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "bearer"
+                                        },
+                                        "expires_in": {
+                                            "type": "integer",
+                                            "example": "3600"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Efetuar logout",
+                "description": "Logout da aplicação",
+                "operationId": "logout",
+                "requestBody": {
+                    "description": "Realizar logout",
+                    "required": true
+                },
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "O Token está expirado!"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logout realizado com Sucesso!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/transference": {
+            "post": {
+                "tags": [
+                    "Transferences"
+                ],
+                "summary": "Realizar transferência",
+                "description": "Realizar transferência entre usuáios",
+                "operationId": "transaction",
+                "requestBody": {
+                    "description": "Realizar transferência",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "payer",
+                                    "payee",
+                                    "value"
+                                ],
+                                "properties": {
+                                    "payer": {
+                                        "type": "int",
+                                        "example": "1"
+                                    },
+                                    "payee": {
+                                        "type": "int",
+                                        "example": "2"
+                                    },
+                                    "value": {
+                                        "type": "float",
+                                        "example": "10.23"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "properties": {
+                                                "value": {
+                                                    "type": "int",
+                                                    "example": "120.15"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "example": "2021-04-08T01:35:47.000000Z"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2021-04-08T01:35:47.000000Z"
+                                                },
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": "2"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "O Token está expirado!"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados fora do padrão esperado ou não informados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "value": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "O campo de valor é obrigatório!"
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Consultar usuários",
+                "description": "Consultar todos os usuários",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "int",
+                                                        "example": "1"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "admin"
+                                                    },
+                                                    "email": {
+                                                        "type": "email",
+                                                        "example": "admin@admin.com"
+                                                    },
+                                                    "document": {
+                                                        "type": "string",
+                                                        "example": "991.290.566-73"
+                                                    },
+                                                    "user_type_id": {
+                                                        "type": "int",
+                                                        "example": "1"
+                                                    },
+                                                    "user_type": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "int",
+                                                                "example": "1"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Usuário"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Criar usuário",
+                "description": "Criar usuário na API",
+                "operationId": "store",
+                "requestBody": {
+                    "description": "Criar usuário",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "document",
+                                    "user_type_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "admin@123"
+                                    },
+                                    "email": {
+                                        "type": "email",
+                                        "format": "email",
+                                        "example": "admin@admin.com"
+                                    },
+                                    "document": {
+                                        "type": "string",
+                                        "example": "99129056673"
+                                    },
+                                    "user_type_id": {
+                                        "type": "int",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "admin"
+                                                },
+                                                "email": {
+                                                    "type": "email",
+                                                    "format": "email",
+                                                    "example": "admin@admin.com"
+                                                },
+                                                "document": {
+                                                    "type": "string",
+                                                    "example": "991.290.566-73"
+                                                },
+                                                "user_type_id": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "O Token está expirado!"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados fora do padrão esperado ou não informados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "O campo nome é obrigatório!"
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Buscar usuário",
+                "description": "Buscar usuário na API",
+                "operationId": "show",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "admin"
+                                                },
+                                                "email": {
+                                                    "type": "email",
+                                                    "format": "email",
+                                                    "example": "admin@admin.com"
+                                                },
+                                                "document": {
+                                                    "type": "string",
+                                                    "example": "991.290.566-73"
+                                                },
+                                                "user_type_id": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                },
+                                                "user_type": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "int",
+                                                            "example": "1"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Usuário"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "O Token está expirado!"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Dados incorretos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário informado não existe!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Atualizar usuário",
+                "description": "Atualizar usuário na API",
+                "operationId": "update",
+                "requestBody": {
+                    "description": "Atualizar usuário",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "document",
+                                    "user_type_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "admin@123"
+                                    },
+                                    "email": {
+                                        "type": "email",
+                                        "format": "email",
+                                        "example": "admin@admin.com"
+                                    },
+                                    "document": {
+                                        "type": "string",
+                                        "example": "99129056673"
+                                    },
+                                    "user_type_id": {
+                                        "type": "int",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "admin"
+                                                },
+                                                "email": {
+                                                    "type": "email",
+                                                    "format": "email",
+                                                    "example": "admin@admin.com"
+                                                },
+                                                "document": {
+                                                    "type": "string",
+                                                    "example": "991.290.566-73"
+                                                },
+                                                "user_type_id": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                },
+                                                "user_type": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "int",
+                                                            "example": "1"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Usuário"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "O Token está expirado!"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Dados incorretos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário informado não existe!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados fora do padrão esperado ou não informados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "O campo e-mail está fora do formato esperado!"
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Remover usuário",
+                "description": "Remover usuário na API",
+                "operationId": "destroy",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "admin"
+                                                },
+                                                "email": {
+                                                    "type": "email",
+                                                    "format": "email",
+                                                    "example": "admin@admin.com"
+                                                },
+                                                "document": {
+                                                    "type": "string",
+                                                    "example": "991.290.566-73"
+                                                },
+                                                "user_type_id": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "O Token está expirado!"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Dados incorretos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário informado não existe!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Atualizar usuário",
+                "description": "Atualizar usuário na API",
+                "operationId": "update",
+                "requestBody": {
+                    "description": "Atualizar usuário",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "admin@123"
+                                    },
+                                    "email": {
+                                        "type": "email",
+                                        "format": "email",
+                                        "example": "admin@admin.com"
+                                    },
+                                    "document": {
+                                        "type": "string",
+                                        "example": "99129056673"
+                                    },
+                                    "user_type_id": {
+                                        "type": "int",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "admin"
+                                                },
+                                                "email": {
+                                                    "type": "email",
+                                                    "format": "email",
+                                                    "example": "admin@admin.com"
+                                                },
+                                                "document": {
+                                                    "type": "string",
+                                                    "example": "991.290.566-73"
+                                                },
+                                                "user_type_id": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                },
+                                                "user_type": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "int",
+                                                            "example": "1"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Usuário"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "O Token está expirado!"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Dados incorretos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário informado não existe!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados fora do padrão esperado ou não informados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "O campo e-mail está fora do formato esperado!"
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/user_types": {
+            "get": {
+                "tags": [
+                    "UserTypes"
+                ],
+                "summary": "Consultar tipos de usuário",
+                "description": "Consultar todos os tipos de usuário",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "int",
+                                                        "example": "1"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Usuário"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "security": [
+        []
+    ]
+}

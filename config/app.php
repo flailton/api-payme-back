@@ -165,10 +165,14 @@ return [
         /*
          * Package Service Providers...
          */
-
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+        L5Swagger\L5SwaggerServiceProvider::class,
         /*
          * Application Service Providers...
          */
+        App\Providers\TransferenceServiceProvider::class,
+        App\Providers\WalletServiceProvider::class,
+        App\Providers\UserTypeServiceProvider::class,
         App\Providers\UserServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,

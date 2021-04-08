@@ -15,14 +15,9 @@ class CreateTransferencesTable extends Migration
     {
         Schema::create('transferences', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('payer_id');
-            $table->unsignedBigInteger('payee_id');
             $table->float('value', 8, 2);
+            $table->timestamp('transferenced_at')->useCurrent();
             $table->timestamps();
-
-            $table->foreign('payer_id')->references('id')->on('payers');
-            $table->foreign('payee_id')->references('id')->on('payees');
-            $table->unique(['payer_id', 'payee_id']);
         });
     }
 

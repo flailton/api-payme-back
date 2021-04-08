@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Interfaces\IUserRepository;
 use App\Interfaces\IUserService;
+use App\Interfaces\IWalletService;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -12,13 +13,16 @@ use Illuminate\Validation\ValidationException;
 class UserService implements IUserService
 {
     private IUserRepository $userRepository;
+    private IWalletService $walletService;
 
     public function __construct(
-        IUserRepository $userRepository
+        IUserRepository $userRepository,
+        IWalletService $walletService
     ) {
         $this->userRepository = $userRepository;
+        $this->walletService = $walletService;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -26,65 +30,40 @@ class UserService implements IUserService
      */
     public function all()
     {
-        try{
-            $users = $this->userRepository->all();
+        $users = $this->userRepository->all();
 
-            foreach($users as $key => $user){
-                $users[$key]['user_type'] = $user->user_type;
-                if(strlen($user->document) === 11){
-                    $users[$key]['document'] = substr($user->document, 0, 3) . '.' . 
-                                               substr($user->document, 3, 3) . '.' . 
-                                               substr($user->document, 6, 3) . '-' . 
-                                               substr($user->document, 9);
-                } else {
-                    $users[$key]['document'] = substr($user->document, 0, 2) . '.' . 
-                                               substr($user->document, 2, 3) . '.' . 
-                                               substr($user->document, 5, 3) . '/' . 
-                                               substr($user->document, 8, 4) . '-' . 
-                                               substr($user->document, 12, 2);
-                }
-                
+        foreach ($users as $key => $user) {
+            $users[$key]['user_type'] = $user->user_type;
+            if (strlen($user->document) === 11) {
+                $users[$key]['document'] = substr($user->document, 0, 3) . '.' .
+                    substr($user->document, 3, 3) . '.' .
+                    substr($user->document, 6, 3) . '-' .
+                    substr($user->document, 9);
+            } else {
+                $users[$key]['document'] = substr($user->document, 0, 2) . '.' .
+                    substr($user->document, 2, 3) . '.' .
+                    substr($user->document, 5, 3) . '/' .
+                    substr($user->document, 8, 4) . '-' .
+                    substr($user->document, 12, 2);
             }
-
-            $response['body'] = $users;
-        } catch (Exception $ex) {
-            $response['body']['errors'][] = $ex->getMessage();
-            $response['status'] = 404;
         }
-        
-        return $response;
+
+        return $users;
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  array  $attributes
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        try{
-            $request->validate($this->userRepository->user->rules(), $this->userRepository->user->feedback());
+        $request->validate($this->userRepository->getUser()->rules(), $this->userRepository->getUser()->messages());
 
-            $attributes = $request->all();
+        $attributes['password'] = Hash::make($request->get('password'));
+        $response = $this->userRepository->store($request->all());
 
-            $attributes['password'] = Hash::make($attributes['password']);
-
-            $response['body'] = $this->userRepository->store($attributes);
-        } catch (Exception | ValidationException $ex) {
-            if($ex instanceof ValidationException){
-                foreach($ex->errors() as $errors){
-                    foreach($errors as $error){
-                        $errors_response[] = $error;
-                    }
-                }
-            } else {
-                $errors_response[] = $ex->getMessage();
-            }
-            $response['body']['errors'] = $errors_response;
-            $response['status'] = 404;
-        }
-        
         return $response;
     }
 
@@ -94,36 +73,27 @@ class UserService implements IUserService
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show()
+    public function show($id)
     {
-        try{
-            if(empty($this->userRepository->user->id)){
-                throw new Exception('Usuário informado não existe!');
-            }
-
-            $user = $this->userRepository->show();
-
-            $user['user_type'] = $user->user_type;
-            if(strlen($user->document) === 11){
-                $user['document'] = substr($user->document, 0, 3) . '.' . 
-                                    substr($user->document, 3, 3) . '.' . 
-                                    substr($user->document, 6, 3) . '-' . 
-                                    substr($user->document, 9);
-            } else {
-                $user['document'] = substr($user->document, 0, 2) . '.' . 
-                                    substr($user->document, 2, 3) . '.' . 
-                                    substr($user->document, 5, 3) . '/' . 
-                                    substr($user->document, 8, 4) . '-' . 
-                                    substr($user->document, 12, 2);
-            }
-
-            $response['body'] = $this->userRepository->show();
-        } catch (Exception $ex) {
-            $response['body']['errors'][] = $ex->getMessage();
-            $response['status'] = 404;
+        if (empty($user = $this->userRepository->show($id))) {
+            throw new Exception('Usuário informado não existe!');
         }
 
-        return $response;
+        $user['user_type'] = $user->user_type;
+        if (strlen($user->document) === 11) {
+            $user['document'] = substr($user->document, 0, 3) . '.' .
+                substr($user->document, 3, 3) . '.' .
+                substr($user->document, 6, 3) . '-' .
+                substr($user->document, 9);
+        } else {
+            $user['document'] = substr($user->document, 0, 2) . '.' .
+                substr($user->document, 2, 3) . '.' .
+                substr($user->document, 5, 3) . '/' .
+                substr($user->document, 8, 4) . '-' .
+                substr($user->document, 12, 2);
+        }
+
+        return $user;
     }
 
     /**
@@ -132,37 +102,32 @@ class UserService implements IUserService
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        try{
-            if(empty($this->userRepository->user->id)){
-                throw new Exception('Usuário informado não existe!');
-            }
-
-            $request->validate($this->userRepository->user->rules(), $this->userRepository->user->feedback());
-
-            $attributes = $request->all();
-
-            if(!empty($attributes['password'])){
-                $attributes['password'] = Hash::make($attributes['password']);
-            }
-
-            $response['body'] = $this->userRepository->update($attributes);
-        } catch (Exception | ValidationException $ex) {
-            if($ex instanceof ValidationException){
-                foreach($ex->errors() as $errors){
-                    foreach($errors as $error){
-                        $errors_response[] = $error;
-                    }
+        $rules = [];
+        if ($request->method() === 'PATCH') {
+            foreach ($this->userRepository->getUser()->rules() as $input => $regra) {
+                if (array_key_exists($input, $request->all())) {
+                    $rules[$input] = $regra;
                 }
-            } else {
-                $errors_response[] = $ex->getMessage();
             }
-            $response['body']['errors'] = $errors_response;
-            $response['status'] = 404;
+        } else {
+            $rules = $request->rules();
         }
-        
-        return $response;
+
+        $request->validate($rules, $this->userRepository->getUser()->messages());
+
+        if (empty($this->userRepository->find($id))) {
+            throw new Exception('Usuário informado não existe!');
+        }
+
+        if (!empty($attributes['password'])) {
+            $attributes['password'] = Hash::make($attributes['password']);
+        }
+
+        $user = $this->userRepository->update($request->all(), $id);
+
+        return $user;
     }
 
     /**
@@ -171,27 +136,48 @@ class UserService implements IUserService
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy()
+    public function destroy($id)
     {
-        try{
-            if(empty($this->userRepository->user->id)){
-                throw new Exception('Usuário informado não existe!');
-            }
-
-            $response['body'] = $this->userRepository->destroy();
-        } catch (Exception | ValidationException $ex) {
-            if($ex instanceof ValidationException){
-                foreach($ex->errors() as $errors){
-                    foreach($errors as $error){
-                        $errors_response[] = $error;
-                    }
-                }
-            } else {
-                $errors_response[] = $ex->getMessage();
-            }
-            $response['body']['errors'] = $errors_response;
-            $response['status'] = 404;
+        if (empty($this->userRepository->find($id))) {
+            throw new Exception('Usuário informado não existe!');
         }
-        return $response;
+
+        return $this->userRepository->destroy($id);
+    }
+
+    public function find($id)
+    {
+        if (empty($user = $this->userRepository->find($id))) {
+            throw new Exception('Usuário informado não existe!');
+        }
+
+        return $user;
+    }
+
+    public function ableTransference($id)
+    {
+        if (empty($this->userRepository->find($id))) {
+            throw new Exception('Usuário informado não existe!');
+        }
+
+        return $this->userRepository->ableTransference($id);
+    }
+
+    public function debit($id, $value)
+    {
+        if (empty($user = $this->userRepository->find($id))) {
+            throw new Exception('Usuário informado não existe!');
+        }
+
+        return $this->walletService->debit($user->wallets[0]->id, $value);
+    }
+
+    public function credit($id, $value)
+    {
+        if (empty($user = $this->userRepository->find($id))) {
+            throw new Exception('Usuário informado não existe!');
+        }
+
+        return $this->walletService->credit($user->wallets[0]->id, $value);
     }
 }

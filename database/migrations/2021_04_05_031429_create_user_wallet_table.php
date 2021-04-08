@@ -14,8 +14,8 @@ class CreateUserWalletTable extends Migration
     public function up()
     {
         Schema::create('user_wallet', function (Blueprint $table) {
-            $table->unsignedBigInteger('wallet_id');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('wallet_id');
 
             $table->foreign('wallet_id')->references('id')->on('wallets');
             $table->foreign('user_id')->references('id')->on('users');
