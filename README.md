@@ -19,6 +19,7 @@ Após finalizado, deve ser criado um Schema com as seguintes características, n
 - Nome: `paymeback` (DB_DATABASE)
 - Username = `root` (DB_USERNAME)
 - Password = `root` (DB_PASSWORD)
+
 *Caso queira alterar essas informações, será necessário ajustar o arquivo .env (na raíz do projeto).
 
 Após realizada a configuração do banco de dados, deverão ser executadso os comandos `php artisan migrate` e `php artisan db:seed`, nessa ordem.
