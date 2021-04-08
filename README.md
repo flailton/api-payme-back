@@ -7,7 +7,7 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## Access Control List (API REST)
+## Pay me Back (API REST)
 
 Este projeto foi desenvolvido com [Laravel Framework](https://laravel.com) versão 8.34.0 e [MySQL Server](https://www.mysql.com/) versão 8.0.
 
