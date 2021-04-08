@@ -22,9 +22,9 @@ Após finalizado, deve ser criado um Schema com as seguintes características, n
 
 *Caso queira alterar essas informações, será necessário ajustar o arquivo .env (na raíz do projeto).
 
-Após realizada a configuração do banco de dados, deverão ser executadso os comandos `php artisan migrate` e `php artisan db:seed`, nessa ordem.
+Após realizada a configuração do banco de dados, deverão ser executados os comandos `php artisan migrate` e `php artisan db:seed`, nessa ordem.
 
-Em seguida execute o comando `php artisan serve` para iniciar o ambiente de desenvolvimento e, em um outro terminal, `php artisan queue:work` para inicializar a o processamento da fila. 
+Em seguida execute o comando `php artisan serve` para iniciar o ambiente de desenvolvimento e, em um outro terminal, `php artisan queue:work` para inicializar o processamento da fila. 
 
 O ambiente ficará acessível através do endereço `http://127.0.0.1:8000/`, ou através de uma porta diferente (informada no terminal), caso esta já esteja ocupada.
 
