@@ -38,6 +38,11 @@ class TransferenceService implements ITransferenceService
      */
     public function transaction(Request $request)
     {
+        /**
+         * rules()
+         * messages()
+         * Validar no Controller
+         */
         $request->validate(
             $this->transferenceRepository->getTransference()->rules(), 
             $this->transferenceRepository->getTransference()->messages()
@@ -74,9 +79,12 @@ class TransferenceService implements ITransferenceService
 
         return $response;
     }
-
+    /**
+     * Criar uma nova classe
+     */
     private function authorization()
     {
+        return ['message' => 'Não autorizado!'];
         return Http::get(Config::get('constants.authorization_check.url'));
     }
 
